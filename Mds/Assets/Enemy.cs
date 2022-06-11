@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
 
     public int maxHealth = 100;
     private int currentHealth;
+    PlayerCombat combat;
 
 
     void Start()
@@ -29,6 +30,7 @@ public class Enemy : MonoBehaviour
         target = PlayerManager.instance.player.transform;
         agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
+        combat = GetComponent<PlayerCombat>();
     }
 
     void Update()
@@ -42,6 +44,7 @@ public class Enemy : MonoBehaviour
 
             if (distance <= agent.stoppingDistance)
             {
+                combat.TakeDamage(10);
                 FaceTarget();
             }
         }
