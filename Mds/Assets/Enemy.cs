@@ -22,7 +22,9 @@ public class Enemy : MonoBehaviour
     public Animator animator;
 
     public int maxHealth = 100;
+
     public int currentHealth;
+    PlayerCombat combat;
 
     public float attackRange = 0.5f;
     public Transform attackPoint;
@@ -45,6 +47,7 @@ public class Enemy : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
+        combat = GetComponent<PlayerCombat>();
     }
 
     void Update()
@@ -54,6 +57,7 @@ public class Enemy : MonoBehaviour
             float distance = Vector3.Distance(target.position, transform.position);
             if (distance <= lookRadius)
             {
+                combat.TakeDamage(10);
                 FaceTarget();
                 animator.SetBool("Move", true);
                 transform.position = Vector3.MoveTowards(transform.position, target.position, speed);
