@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
+using System;
 
 public class Enemy : MonoBehaviour
 {
@@ -15,34 +17,55 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float attackRate;
     float nextAttackTime = 0f;
 
-    Transform target;
     NavMeshAgent agent;
 
     public Animator animator;
 
     public int maxHealth = 100;
-    private int currentHealth;
+    public int currentHealth;
 
+    public float attackRange = 0.5f;
+    public Transform attackPoint;
+    public LayerMask playerLayers;
+
+    public Transform target;
+
+    public float speed;
+
+    [Header("Enemy")]
+    public Enemy enemy;
+
+    public HealthBarEnemy healthBar;
+
+    public Image hpBar;
+
+    public GameManager enemiesNr;
 
     void Start()
     {
-        target = PlayerManager.instance.player.transform;
         agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
     }
 
     void Update()
     {
-        float distance = Vector3.Distance(target.position, transform.position);
-
-        if (distance <= lookRadius)
-        {
-            agent.SetDestination(target.position);
-            animator.SetBool("Move", true);
-
-            if (distance <= agent.stoppingDistance)
+        if(Time.timeScale == 1)
+        { 
+            float distance = Vector3.Distance(target.position, transform.position);
+            if (distance <= lookRadius)
             {
                 FaceTarget();
+                animator.SetBool("Move", true);
+                transform.position = Vector3.MoveTowards(transform.position, target.position, speed);
+            }
+
+            if (distance <= attackRange)
+            {
+                if (Time.time >= nextAttackTime)
+                {
+                    Attack();
+                    nextAttackTime = Time.time + 1f / attackRate;
+                }
             }
         }
     }
@@ -54,10 +77,23 @@ public class Enemy : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
     }
 
+    void Attack()
+    {
+        animator.SetTrigger("Attack");
+
+        Collider[] hitPlayers = Physics.OverlapSphere(attackPoint.position, attackRange, playerLayers);
+        foreach (Collider player in hitPlayers)
+        {
+            player.GetComponent<PlayerCombat>().TakeDamage(attackDamage);
+        }
+
+    }
 
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+
+        healthBar.UpdateHealthBar(enemy, hpBar);
 
         animator.SetTrigger("Hurt");
 
@@ -69,10 +105,16 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        animator.SetBool("Move", false);
         animator.SetBool("IsDead", true);
 
         GetComponent<CapsuleCollider>().enabled = false;
         this.enabled = false;
+
+        healthBar.gameObject.SetActive(false);
+
+        enemy.gameObject.tag = "Untagged";
+
     }
 
     void OnDrawGizmosSelected()
@@ -80,5 +122,4 @@ public class Enemy : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, lookRadius);
     }
-   
 }

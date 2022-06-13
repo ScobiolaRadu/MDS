@@ -20,8 +20,14 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        var flipY = PlayerPrefs.GetInt("masterInvertY");
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseY;
+        if(flipY == 1)
+             mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime * (-1);   
+        else
+             mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);

@@ -23,7 +23,7 @@ public class MenuController : MonoBehaviour
 
     [Header("Graphics Settings")]
     [SerializeField] private Slider brightnessSlider = null;
-    [SerializeField] private TextMeshProUGUI brightnessTextValue = null;
+    [SerializeField] private TMP_Text brightnessTextValue = null;
     [SerializeField] private float defaultBrightness = 1;
 
     [Space(10)]
@@ -77,6 +77,7 @@ public class MenuController : MonoBehaviour
     public void NewGameDialogYes()
     {
         SceneManager.LoadScene(_newGameLevel);
+        Time.timeScale = 1;
     }
 
     public void LoadGameDialogYes()
@@ -85,6 +86,7 @@ public class MenuController : MonoBehaviour
         {
             levelToLoad = PlayerPrefs.GetString("SavedLevel");
             SceneManager.LoadScene(levelToLoad);
+            Time.timeScale = 1;
         }
         else
         {
@@ -117,9 +119,13 @@ public class MenuController : MonoBehaviour
     public void GameplayApply()
     {
         if (invertYToggle.isOn)
+        {
             PlayerPrefs.SetInt("masterInvertY", 1);
+        }
         else
+        {
             PlayerPrefs.SetInt("masterInvertY", 0);
+        }
 
         PlayerPrefs.SetFloat("masterSen", mainControllerSen);
     }
