@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using System;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -21,6 +23,18 @@ public class PlayerCombat : MonoBehaviour
     [Header("Health")]
     [SerializeField] public int maxHealth;
     public int currentHealth;
+
+    [Header("Character")]
+    public PlayerCombat player;
+
+    public HealthBar healthBar;
+
+    public Image hpBar;
+
+    void Start()
+    {
+        currentHealth = maxHealth;
+    }
 
     void Update()
     {
@@ -55,6 +69,7 @@ public class PlayerCombat : MonoBehaviour
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        healthBar.UpdateHealthBar(player, hpBar);
 
         animator.SetTrigger("Hurt");
 
@@ -73,4 +88,5 @@ public class PlayerCombat : MonoBehaviour
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
+
 }
