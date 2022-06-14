@@ -14,10 +14,6 @@ public class LoadPrefsInGame : MonoBehaviour
     [SerializeField] private TextMeshProUGUI volumeTextValue = null;
     [SerializeField] private Slider volumeSlider = null;
 
-    [Header("Brightness Setting")]
-    [SerializeField] private Slider brightnessSlider = null;
-    [SerializeField] private TextMeshProUGUI brightnessTextValue = null;
-
     [Header("Quality Level Setting")]
     [SerializeField] private TMP_Dropdown qualityDropdown;
 
@@ -31,6 +27,12 @@ public class LoadPrefsInGame : MonoBehaviour
     [Header("Invert Y Setting")]
     [SerializeField] private Toggle invertYToggle = null;
 
+    [Header("Difficulty Setting")]
+    [SerializeField] private TMP_Dropdown difficultyDropdown;
+
+    [SerializeField] public TextMeshProUGUI killedEnemies;
+
+    [SerializeField] public TextMeshProUGUI wastedTime;
 
     private void Awake()
     {
@@ -53,7 +55,13 @@ public class LoadPrefsInGame : MonoBehaviour
             {
                 int localQuality = PlayerPrefs.GetInt("masterQuality");
                 qualityDropdown.value = localQuality;
-                QualitySettings.SetQualityLevel(localQuality);
+                QualitySettings.SetQualityLevel(localQuality, false);
+            }
+
+            if (PlayerPrefs.HasKey("masterDifficulty"))
+            {
+                int localDifficulty = PlayerPrefs.GetInt("masterDifficulty");
+                difficultyDropdown.value = localDifficulty;
             }
 
             if (PlayerPrefs.HasKey("masterFullscreen"))
@@ -71,14 +79,6 @@ public class LoadPrefsInGame : MonoBehaviour
                     Screen.fullScreen = false;
                     fullScreenToggle.isOn = false;
                 }
-            }
-
-            if (PlayerPrefs.HasKey("masterBrightness"))
-            {
-                float localBrightness = PlayerPrefs.GetFloat("masterBrightness");
-
-                brightnessTextValue.text = localBrightness.ToString("0.0");
-                brightnessSlider.value = localBrightness;
             }
 
             if (PlayerPrefs.HasKey("masterSen"))
@@ -101,6 +101,12 @@ public class LoadPrefsInGame : MonoBehaviour
                 {
                     invertYToggle.isOn = false;
                 }
+            }
+
+            if (PlayerPrefs.HasKey("KilledEnemies"))
+            {
+                int nrKilled = PlayerPrefs.GetInt("KilledEnemies");
+                killedEnemies.text = nrKilled.ToString();
             }
         }
     }

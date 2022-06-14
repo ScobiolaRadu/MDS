@@ -21,8 +21,8 @@ public class PlayerCombat : MonoBehaviour
     float nextAttackTime = 0f;
 
     [Header("Health")]
-    [SerializeField] public int maxHealth;
-    public int currentHealth;
+    [SerializeField] public float maxHealth;
+    public float currentHealth;
 
     [Header("Character")]
     public PlayerCombat player;
@@ -66,7 +66,7 @@ public class PlayerCombat : MonoBehaviour
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         currentHealth -= damage;
         healthBar.UpdateHealthBar(player, hpBar);

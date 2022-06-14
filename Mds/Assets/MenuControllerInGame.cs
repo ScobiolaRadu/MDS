@@ -7,6 +7,8 @@ using TMPro;
 
 public class MenuControllerInGame : MonoBehaviour
 {
+    int chrindex;
+    int nrKilled;
     public void Exit()
     {
         SceneManager.LoadScene("MainMenu");
@@ -14,9 +16,12 @@ public class MenuControllerInGame : MonoBehaviour
 
     public void Save()
     {
+        chrindex = PlayerPrefs.GetInt("CharacterSelected");
+        nrKilled = killedNr + killedNrInit;
         string lvlName = SceneManager.GetActiveScene().name;
         PlayerPrefs.SetString("SavedLevel", lvlName);
         PlayerPrefs.SetInt("SavedCharacter", chrindex);
+        PlayerPrefs.SetInt("KilledEnemies", nrKilled);
     }
 
     [Header("Volume Setting")]
@@ -33,25 +38,54 @@ public class MenuControllerInGame : MonoBehaviour
     [Header("Toggle Settings")]
     [SerializeField] private Toggle invertYToggle = null;
 
-    [Header("Graphics Settings")]
-    [SerializeField] private Slider brightnessSlider = null;
-    [SerializeField] private TMP_Text brightnessTextValue = null;
-    [SerializeField] private float defaultBrightness = 1;
-
     [Space(10)]
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private Toggle fullScreenToggle;
 
     private int _qualityLevel;
     private bool _isFullScreen;
-    private float _brightnessLevel;
 
     [Header("Resolution Dropdown")]
     public TMP_Dropdown resolutionDropdown;
     private Resolution[] resolutions;
 
+    [Header("Difficulty Dropdown")]
+    public TMP_Dropdown difficultyDropdown;
+
+    private int _difficultyLevel = 1;
+
+    public GameObject[] enemies;
+    public GameObject[] initialEnemies;
+
+    [SerializeField] public TextMeshProUGUI killedEnemies;
+
+    public int killedNr;
+    public int killedNrInit;
+
+
+    [SerializeField] public TextMeshProUGUI wastedTime;
+
+    public void SetDifficulty(int difficultyIndex)
+    {
+        _difficultyLevel = difficultyIndex;
+    }
+
+
     private void Start()
     {
+        killedNrInit = 0;
+
+        initialEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        bool ng = GameObject.Find("MenuController").GetComponent<MenuController>().newGame;
+
+        Debug.Log(ng);
+
+        if (PlayerPrefs.HasKey("KilledEnemies") && ng == false)
+        {
+            killedNrInit = PlayerPrefs.GetInt("KilledEnemies");
+        }
+
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
@@ -73,6 +107,16 @@ public class MenuControllerInGame : MonoBehaviour
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.value = currentResolutionIndex;
         resolutionDropdown.RefreshShownValue();
+    }
+
+    public void Update()
+    {
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        killedNr = initialEnemies.Length - enemies.Length;
+        killedEnemies.text = (killedNr + killedNrInit).ToString();
+
+        wastedTime.text = Time.time.ToString("0.0");
     }
 
     public void SetResolution(int resolutionIndex)
@@ -109,12 +153,16 @@ public class MenuControllerInGame : MonoBehaviour
             PlayerPrefs.SetInt("masterInvertY", 0);
         }
         PlayerPrefs.SetFloat("masterSen", mainControllerSen);
-    }
 
-    public void SetBrightness(float brightness)
-    {
-        _brightnessLevel = brightness;
-        brightnessTextValue.text = brightness.ToString("0.0");
+        int previousDifficulty = PlayerPrefs.GetInt("masterDifficulty");
+
+        PlayerPrefs.SetInt("masterDifficulty", _difficultyLevel);
+
+        if(previousDifficulty != _difficultyLevel)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            Time.timeScale = 1;
+        }
     }
 
     public void SetFullScreen(bool isFullscreen)
@@ -129,7 +177,6 @@ public class MenuControllerInGame : MonoBehaviour
 
     public void GraphicsApply()
     {
-        PlayerPrefs.SetFloat("masterBrightness", _brightnessLevel);
 
         PlayerPrefs.SetInt("masterQuality", _qualityLevel);
         QualitySettings.SetQualityLevel(_qualityLevel);
@@ -142,8 +189,6 @@ public class MenuControllerInGame : MonoBehaviour
     {
         if (MenuType == "Graphics")
         {
-            brightnessSlider.value = defaultBrightness;
-            brightnessTextValue.text = defaultBrightness.ToString("0.0");
 
             qualityDropdown.value = 1;
             QualitySettings.SetQualityLevel(1);
@@ -171,6 +216,7 @@ public class MenuControllerInGame : MonoBehaviour
             controllerSenSlider.value = defaultSen;
             mainControllerSen = defaultSen;
             invertYToggle.isOn = false;
+            _difficultyLevel = 1;
             GameplayApply();
         }
     }

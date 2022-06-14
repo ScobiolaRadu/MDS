@@ -21,18 +21,12 @@ public class MenuController : MonoBehaviour
     [Header("Toggle Settings")]
     [SerializeField] private Toggle invertYToggle = null;
 
-    [Header("Graphics Settings")]
-    [SerializeField] private Slider brightnessSlider = null;
-    [SerializeField] private TMP_Text brightnessTextValue = null;
-    [SerializeField] private float defaultBrightness = 1;
-
     [Space(10)]
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private Toggle fullScreenToggle;
 
     private int _qualityLevel;
     private bool _isFullScreen;
-    private float _brightnessLevel;
 
     [Header("Levels To Load")]
     [SerializeField] public string _newGameLevel;
@@ -43,8 +37,30 @@ public class MenuController : MonoBehaviour
     public TMP_Dropdown resolutionDropdown;
     private Resolution[] resolutions;
 
+    [Header("Difficulty Dropdown")]
+    public TMP_Dropdown difficultyDropdown;
+
+    private int _difficultyLevel = 1;
+
+    public bool newGame;
+
+    private static GameObject menuInstance;
+
+    private void Awake()
+    {   
+        if(menuInstance != null)
+        {
+            Destroy(menuInstance);
+        }
+        menuInstance = gameObject;
+        DontDestroyOnLoad(this);
+        Time.timeScale = 0;
+    }
+
     private void Start()
     {
+        newGame = false;
+
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
@@ -76,6 +92,7 @@ public class MenuController : MonoBehaviour
 
     public void NewGameDialogYes()
     {
+        newGame = true;
         SceneManager.LoadScene(_newGameLevel);
         Time.timeScale = 1;
     }
@@ -87,6 +104,16 @@ public class MenuController : MonoBehaviour
             levelToLoad = PlayerPrefs.GetString("SavedLevel");
             SceneManager.LoadScene(levelToLoad);
             Time.timeScale = 1;
+            if (PlayerPrefs.HasKey("SavedCharacter"))
+            {
+                int chrindex = PlayerPrefs.GetInt("SavedCharacter");
+                PlayerPrefs.SetInt("CharacterSelected", chrindex);
+            }
+            if(PlayerPrefs.HasKey("KilledEnemies"))
+            {
+                int nrKilled = PlayerPrefs.GetInt("KilledEnemies");
+                PlayerPrefs.SetInt("KilledEnemies", nrKilled);
+            }
         }
         else
         {
@@ -116,6 +143,11 @@ public class MenuController : MonoBehaviour
         controllerSenTextValue.text = sensitivity.ToString("0");
     }
 
+    public void SetDifficulty(int difficultyIndex)
+    {
+        _difficultyLevel = difficultyIndex;
+    }
+
     public void GameplayApply()
     {
         if (invertYToggle.isOn)
@@ -128,12 +160,8 @@ public class MenuController : MonoBehaviour
         }
 
         PlayerPrefs.SetFloat("masterSen", mainControllerSen);
-    }
 
-    public void SetBrightness(float brightness)
-    {
-        _brightnessLevel = brightness;
-        brightnessTextValue.text = brightness.ToString("0.0");
+        PlayerPrefs.SetInt("masterDifficulty", _difficultyLevel);
     }
 
     public void SetFullScreen(bool isFullscreen)
@@ -148,7 +176,6 @@ public class MenuController : MonoBehaviour
 
     public void GraphicsApply()
     {
-        PlayerPrefs.SetFloat("masterBrightness", _brightnessLevel);
 
         PlayerPrefs.SetInt("masterQuality", _qualityLevel);
         QualitySettings.SetQualityLevel(_qualityLevel);
@@ -161,8 +188,6 @@ public class MenuController : MonoBehaviour
     {
         if (MenuType == "Graphics")
         {
-            brightnessSlider.value = defaultBrightness;
-            brightnessTextValue.text = defaultBrightness.ToString("0.0");
 
             qualityDropdown.value = 1;
             QualitySettings.SetQualityLevel(1);
@@ -190,6 +215,7 @@ public class MenuController : MonoBehaviour
             controllerSenSlider.value = defaultSen;
             mainControllerSen = defaultSen;
             invertYToggle.isOn = false;
+            difficultyDropdown.value = 1;
             GameplayApply();
         }
     }

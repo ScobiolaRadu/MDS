@@ -14,10 +14,6 @@ public class LoadPrefs : MonoBehaviour
     [SerializeField] private TextMeshProUGUI volumeTextValue = null;
     [SerializeField] private Slider volumeSlider = null;
 
-    [Header("Brightness Setting")]
-    [SerializeField] private Slider brightnessSlider = null;
-    [SerializeField] private TextMeshProUGUI brightnessTextValue = null;
-
     [Header("Quality Level Setting")]
     [SerializeField] private TMP_Dropdown qualityDropdown;
 
@@ -31,6 +27,8 @@ public class LoadPrefs : MonoBehaviour
     [Header("Invert Y Setting")]
     [SerializeField] private Toggle invertYToggle = null;
 
+    [Header("Difficulty Setting")]
+    [SerializeField] private TMP_Dropdown difficultyDropdown;
 
     private void Awake()
     {
@@ -56,7 +54,13 @@ public class LoadPrefs : MonoBehaviour
                 QualitySettings.SetQualityLevel(localQuality);
             }
 
-            if(PlayerPrefs.HasKey("masterFullscreen"))
+            if (PlayerPrefs.HasKey("masterDifficulty"))
+            {
+                int localDifficulty = PlayerPrefs.GetInt("masterDifficulty");
+                difficultyDropdown.value = localDifficulty;
+            }
+
+            if (PlayerPrefs.HasKey("masterFullscreen"))
             {
                 int localFullscreen = PlayerPrefs.GetInt("masterFullscreen");
 
@@ -71,14 +75,6 @@ public class LoadPrefs : MonoBehaviour
                     Screen.fullScreen = false;
                     fullScreenToggle.isOn = false;
                 }
-            }
-
-            if (PlayerPrefs.HasKey("masterBrightness"))
-            {
-                float localBrightness = PlayerPrefs.GetFloat("masterBrightness");
-
-                brightnessTextValue.text = localBrightness.ToString("0.0");
-                brightnessSlider.value = localBrightness;
             }
 
             if (PlayerPrefs.HasKey("masterSen"))

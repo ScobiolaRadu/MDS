@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
   
 public class GameManager : MonoBehaviour
 {
@@ -8,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] enemies;
 
-void Update()
+    void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
@@ -30,7 +32,7 @@ void Update()
 
         }
 
-    enemies = GameObject.FindGameObjectsWithTag("Enemy");
+    enemies = GameObject.FindGameObjectsWithTag("Enemy");      
     }
 }
 

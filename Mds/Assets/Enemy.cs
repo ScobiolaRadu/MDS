@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] public float lookRadius;
 
     [Header("Attack Damage")]
-    [SerializeField] public int attackDamage;
+    [SerializeField] public float attackDamage;
 
     [Header("Attack Rate")]
     [SerializeField] public float attackRate;
@@ -21,10 +21,9 @@ public class Enemy : MonoBehaviour
 
     public Animator animator;
 
-    public int maxHealth = 100;
-
-    public int currentHealth;
-    PlayerCombat combat;
+    [Header("Max Health")]
+    [SerializeField]public float maxHealth;
+    public float currentHealth;
 
     public float attackRange = 0.5f;
     public Transform attackPoint;
@@ -45,19 +44,29 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        int localDifficulty = PlayerPrefs.GetInt("masterDifficulty");
+        float multiplier;
+        if (localDifficulty == 0)
+            multiplier = 0.9f;
+        else if (localDifficulty == 1)
+            multiplier = 1;
+        else
+            multiplier = 1.1f;
+
+        maxHealth = maxHealth * multiplier;
+        attackDamage = attackDamage * multiplier;
+
         agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
-        combat = GetComponent<PlayerCombat>();
     }
 
     void Update()
     {
-        if(Time.timeScale == 1)
+        if (Time.timeScale == 1)
         { 
             float distance = Vector3.Distance(target.position, transform.position);
             if (distance <= lookRadius)
             {
-                combat.TakeDamage(10);
                 FaceTarget();
                 animator.SetBool("Move", true);
                 transform.position = Vector3.MoveTowards(transform.position, target.position, speed);
