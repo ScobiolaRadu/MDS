@@ -10,6 +10,8 @@ public class LevelProgression : MonoBehaviour
     public Transform target;
 
     public GameObject txt;
+
+    public MenuControllerInGame menu;
     
     void Update()
     {
@@ -20,11 +22,28 @@ public class LevelProgression : MonoBehaviour
             txt.SetActive(true);
             if (Input.GetKeyDown("e"))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                if (GlobalAchievements.triggerAch02 == false)
+                {
+                    GlobalAchievements.triggerAch02 = true;
+                    StartCoroutine(WaitForSceneLoad());
+                }
+                else
+                {
+                    Screen.lockCursor = false;
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                    Screen.lockCursor = false;
+                }
             }
 
         }
         else
             txt.SetActive(false);   
+    }
+
+    IEnumerator WaitForSceneLoad()
+    {
+        yield return new WaitForSeconds(5);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        Screen.lockCursor = false;
     }
 }

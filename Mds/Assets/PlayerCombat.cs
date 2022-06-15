@@ -12,6 +12,8 @@ public class PlayerCombat : MonoBehaviour
     public Transform attackPoint;
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
+    public LayerMask bossLayers1;
+    public LayerMask bossLayers2;
 
     [Header("Attack Damage")]
     [SerializeField] public int attackDamage;
@@ -31,6 +33,10 @@ public class PlayerCombat : MonoBehaviour
 
     public Image hpBar;
 
+    public AudioSource attackSound;
+    public AudioSource missSound;
+
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -49,12 +55,31 @@ public class PlayerCombat : MonoBehaviour
     void Attack()
     {
         animator.SetTrigger("Attack");
+        if (Time.timeScale == 1)
+            missSound.Play();
 
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange, enemyLayers);
         foreach(Collider enemy in hitEnemies)
         {
+            attackSound.Play();
             enemy.GetComponent<Enemy>().TakeDamage(attackDamage);
+  
         }
+
+        Collider[] hitBoss = Physics.OverlapSphere(attackPoint.position, attackRange, bossLayers1);
+        foreach (Collider boss in hitBoss)
+        {
+            attackSound.Play();
+            boss.GetComponent<Boss1>().TakeDamage(attackDamage);
+        }
+
+        Collider[] hitBoss2 = Physics.OverlapSphere(attackPoint.position, attackRange, bossLayers2);
+        foreach (Collider boss2 in hitBoss2)
+        {
+            attackSound.Play();
+            boss2.GetComponent<Boss2>().TakeDamage(attackDamage);
+        }
+
 
     }
 
@@ -86,7 +111,15 @@ public class PlayerCombat : MonoBehaviour
         GetComponent<CapsuleCollider>().enabled = false;
         this.enabled = false;
 
+        StartCoroutine(WaitForRespawn());
+    }
+
+    IEnumerator WaitForRespawn()
+    { 
+        yield return new WaitForSeconds(0.5f);
+        Screen.lockCursor = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Screen.lockCursor = false;
     }
 
 }

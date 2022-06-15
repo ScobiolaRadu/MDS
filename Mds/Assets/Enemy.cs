@@ -42,6 +42,9 @@ public class Enemy : MonoBehaviour
 
     public GameManager enemiesNr;
 
+    public AudioSource attackSound;
+    public AudioSource missSound;
+
     void Start()
     {
         int localDifficulty = PlayerPrefs.GetInt("masterDifficulty");
@@ -63,13 +66,14 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (Time.timeScale == 1)
-        { 
+        {
             float distance = Vector3.Distance(target.position, transform.position);
             if (distance <= lookRadius)
             {
                 FaceTarget();
                 animator.SetBool("Move", true);
-                transform.position = Vector3.MoveTowards(transform.position, target.position, speed);
+                agent.SetDestination(target.position);
+
             }
 
             if (distance <= attackRange)
@@ -93,11 +97,13 @@ public class Enemy : MonoBehaviour
     void Attack()
     {
         animator.SetTrigger("Attack");
+        missSound.Play();
 
         Collider[] hitPlayers = Physics.OverlapSphere(attackPoint.position, attackRange, playerLayers);
         foreach (Collider player in hitPlayers)
         {
             player.GetComponent<PlayerCombat>().TakeDamage(attackDamage);
+            attackSound.Play();
         }
 
     }
@@ -119,7 +125,7 @@ public class Enemy : MonoBehaviour
     void Die()
     {
         animator.SetBool("Move", false);
-        animator.SetBool("IsDead", true);
+        animator.SetTrigger("Die");
 
         GetComponent<CapsuleCollider>().enabled = false;
         this.enabled = false;
@@ -128,6 +134,7 @@ public class Enemy : MonoBehaviour
 
         enemy.gameObject.tag = "Untagged";
 
+        GlobalAchievements.ach01Count += 1;
     }
 
     void OnDrawGizmosSelected()

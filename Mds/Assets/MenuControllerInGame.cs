@@ -8,7 +8,7 @@ using TMPro;
 public class MenuControllerInGame : MonoBehaviour
 {
     int chrindex;
-    int nrKilled;
+    public int nrKilled;
     public void Exit()
     {
         SceneManager.LoadScene("MainMenu");
@@ -78,8 +78,6 @@ public class MenuControllerInGame : MonoBehaviour
         initialEnemies = GameObject.FindGameObjectsWithTag("Enemy");
 
         bool ng = GameObject.Find("MenuController").GetComponent<MenuController>().newGame;
-
-        Debug.Log(ng);
 
         if (PlayerPrefs.HasKey("KilledEnemies") && ng == false)
         {

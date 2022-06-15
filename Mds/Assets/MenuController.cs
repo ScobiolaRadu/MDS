@@ -46,6 +46,13 @@ public class MenuController : MonoBehaviour
 
     private static GameObject menuInstance;
 
+    [Header("Achievements")]
+    [SerializeField] public GameObject Ach01;
+    [SerializeField] public GameObject Ach02;
+    [SerializeField] public GameObject Ach03;
+    [SerializeField] public GameObject Ach04;
+    [SerializeField] public GameObject Ach05;
+
     private void Awake()
     {   
         if(menuInstance != null)

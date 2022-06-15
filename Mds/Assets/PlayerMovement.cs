@@ -15,6 +15,9 @@ public class PlayerMovement : MonoBehaviour
     public float groundDistance = 0.4f;
     public LayerMask groundmask;
 
+    public AudioSource jumpSound;
+    public AudioSource walkSound;
+
     Vector3 velocity;
     bool isGrounded;
 
@@ -40,11 +43,21 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
+            jumpSound.Play();
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
         velocity.y += gravity * Time.deltaTime;
 
+        float sensitivity = PlayerPrefs.GetFloat("masterSen");
+
         controller.Move(velocity * Time.deltaTime);
+
+        if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical"))
+            walkSound.Play();
+        else if (!Input.GetButton("Horizontal") && !Input.GetButton("Vertical") && walkSound.isPlaying)
+            walkSound.Stop();
     }
+
+    
 }

@@ -98,6 +98,29 @@ public class LoadPrefs : MonoBehaviour
                     invertYToggle.isOn = false;
                 }
             }
+
+            if(PlayerPrefs.HasKey("Ach01"))
+            {
+                menuController.Ach01.SetActive(true);
+            }
+
+            if (PlayerPrefs.HasKey("Ach02"))
+            {
+                menuController.Ach02.SetActive(true);
+            }
+            if (PlayerPrefs.HasKey("Ach03"))
+            {
+                menuController.Ach03.SetActive(true);
+            }
+            if (PlayerPrefs.HasKey("Ach04"))
+            {
+                menuController.Ach04.SetActive(true);
+            }
+
+            if (PlayerPrefs.HasKey("Ach05"))
+            {
+                menuController.Ach05.SetActive(true);
+            }
         }
     }
 }
