@@ -28,6 +28,14 @@ Castle Quest is an action-adventure game in which the player must explore the ch
 ## Build Tool
 Pentru crearea jocului am utilizat Unity Build Tool
 
+## Code Standards
+Proiectul respecta majoritatea standardelor precizate aici: <a href="https://avangarde-software.com/unity-coding-guidelines-basic-best-practices/">code standards</a>
+- consistenta
+- denumirea claselor PascalCase, iar denumirea atributelor camelCase
+- indentare, spatiere
+- folosim [Serializable] pentru a putea modifica valoarea atributelor din inspector
+- folosim un Singleton pentru a avea instanta jucatorului
+
 ## Backlog
 https://app.clickup.com/18340530/v/b/6-180578787-2?pr=48355655<br>
 <img src="https://raw.githubusercontent.com/ScobiolaRadu/MDS/main/Screen%20Shot%202022-06-16%20at%2016.18.17%20PM.png"> 
