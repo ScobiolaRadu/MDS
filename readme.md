@@ -25,6 +25,9 @@ Castle Quest is an action-adventure game in which the player must explore the ch
 9. As a player, I want a statistics section so that I can view additional information about my gameplay.
 10. As a player, I want simple game rules so that I can easily understand how to play it.
 
+## Build Tool
+Pentru crearea jocului am utilizat Unity Build Tool
+
 ## Backlog
 https://app.clickup.com/18340530/v/b/6-180578787-2?pr=48355655<br>
 <img src="https://raw.githubusercontent.com/ScobiolaRadu/MDS/main/Screen%20Shot%202022-06-16%20at%2016.18.17%20PM.png"> 
